@@ -27,7 +27,7 @@
 
     <div class="container mt-3">
         <div class="row">
-            <h1 class="text-center mt-3">JSON Modifier</h1>
+            <h1 class="text-center">JSON Modifier</h1>
 
             <div id="inputSection">
                 <div class="col-12">
@@ -37,51 +37,51 @@
                     <input class="form-control" type="file" id="fileInput" accept=".json">
                 </div>
 
-                <div class="col-12 mt-3">
+                <div class="col-12 mt-2">
                     <label for="jsonTextInput" class="form-label">
                         <i class="fa-solid fa-clipboard"></i> Or Paste JSON Directly Here
                     </label>
                     <textarea id="jsonTextInput" class="form-control" rows="8" placeholder="Paste JSON here..."></textarea>
                 </div>
 
-                <div class="col-12 mt-3">
+                <div class="col-12 mt-2">
                     <label for="serverName" class="form-label">
                         <i class="fa-solid fa-server"></i> Server Name
                     </label>
                     <input type="text" id="serverName" class="form-control" placeholder="Enter new server name">
                 </div>
 
-                <div class="col-12 mt-3">
+                <div class="col-12 mt-2">
                     <label for="host" class="form-label">
                         <i class="fa-solid fa-cloud"></i> Host
                     </label>
                     <input type="text" id="host" class="form-control" placeholder="Enter new host">
                 </div>
 
-                <div class="col-12 mt-3">
+                <div class="col-12 mt-2">
                     <label for="ipList" class="form-label">
                         <i class="fa-solid fa-network-wired"></i> Addresses List (one address per line)
                     </label>
                     <textarea id="ipList" class="form-control" rows="3" placeholder="Enter addresses, IP or domain"></textarea>
                 </div>
 
-                <button class="btn btn-primary w-100 mt-3" onclick="processJson()">
+                <button class="btn btn-primary w-100 mt-2 mb-2" onclick="processJson()">
                     <i class="fa-solid fa-cogs"></i> Process JSON
                 </button>
             </div>
 
             <div id="outputSection" class="hidden">
-                <div class="col-12 mt-3">
+                <div class="col-12 mt-2">
                     <label for="output" class="form-label">
                         <i class="fa-solid fa-code"></i> Modified JSON
                     </label>
                     <textarea id="output" class="form-control" rows="8" placeholder="Modified JSON will appear here..." readonly></textarea>
                 </div>
 
-                <button id="copyButton" class="btn btn-secondary w-100 mt-3" onclick="copyToClipboard()">
+                <button id="copyButton" class="btn btn-secondary w-100 mt-2" onclick="copyToClipboard()">
                     <i class="fa-solid fa-copy"></i> Copy to Clipboard
                 </button>
-                <button id="saveButton" class="btn btn-primary w-100 mt-3" onclick="saveFile()">
+                <button id="saveButton" class="btn btn-primary w-100 mt-2" onclick="saveFile()">
                     <i class="fa-solid fa-download"></i> Save as JSON
                 </button>
             </div>

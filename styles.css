@@ -1,9 +1,9 @@
 body {
     margin: 0;
     padding: 0;
-    height: 100lvh;
+    height: 100%;
     font-family: 'Poppins', sans-serif;
-	font-size: 0.8rem;
+    font-size: 0.8rem;
     background-image: linear-gradient(to right, #434343 0%, black 100%);
     color: #fff;
     overflow-x: hidden;
@@ -19,7 +19,7 @@ h1 {
 
 ::placeholder {
     font-size: 14px;
-    }
+}
 
 .bg-primary {
 	background: linear-gradient(180deg, #d58b0b 0%, #d54a05 100%);
@@ -32,15 +32,15 @@ h1 {
 }
 
 .btn:hover {
-     transform: scale(1.05);
+    transform: scale(1.05);
 }
 		
 .hidden {
-            display: none;
-        }
+    display: none;
+}
 
 @media (min-width: 768px) {
-    .container {
-        max-width: 720px;
-    }
+.container {
+     max-width: 720px;
+     max-height: 600px;
 }

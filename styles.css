@@ -1,53 +1,104 @@
+/* CSS Variables for easy theme updates */
+:root {
+  --primary-gradient: linear-gradient(180deg, #d58b0b 0%, #d54a05 100%);
+  --btn-gradient: linear-gradient(180deg, #d54a05 0%, #d58b0b 100%);
+  --text-gradient: linear-gradient(#fab728, #f54900, #ed2b05);
+  --bg-gradient: linear-gradient(to right, #434343 0%, black 100%);
+  --diff-add: #525252;
+  --diff-remove: #044f62;
+}
+
+/* Base styling */
 body {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    font-family: "Gill Sans", math;
-	font-size: 0.8rem;
-    background-image: linear-gradient(to right, #434343 0%, black 100%);
-    color: #fff;
-    overflow-x: hidden;
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: "Gill Sans", sans-serif;
+  font-size: 0.8rem;
+  background-image: var(--bg-gradient);
+  color: #fff;
+  overflow-x: hidden;
 }
-	
+
+/* Gradient heading */
 h1 {
-    font-size: 2.5rem;
-    margin-bottom: 1rem;
-    background: linear-gradient(#fab728, #f54900, #ed2b05);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+  font-size: 1.8rem;
+  margin-bottom: 0.3rem;
+  background: var(--text-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
+/* Placeholder text size */
 ::placeholder {
-    font-size: 14px;
-    }
+  font-size: 14px;
+}
 
+/* Navbar & Button Styling */
 .bg-primary {
-	background: linear-gradient(180deg, #d58b0b 0%, #d54a05 100%);
+  background: var(--primary-gradient);
 }
 
 .btn-primary {
-	background: -webkit-linear-gradient(180deg, #d54a05 0%, #d58b0b 100%);
-    background: linear-gradient(180deg, #d54a05 0%, #d58b0b 100%);
-    color: white;
+  background: var(--btn-gradient);
+  color: #fff;
+  margin-bottom: 1rem;
 }
 
+/* Button hover effect */
 .btn:hover {
-    transform: scale(1.05);
+  transform: scale(1.05);
+  transition: transform 0.2s ease-in-out;
 }
-		
+
+/* Utility classes */
 .hidden {
-    display: none;
+  display: none;
 }
 
+/* Style for the eye toggle button */
+.toggle-btn {
+  cursor: pointer;
+  margin-left: 10px;
+  color: #d58b0b;
+}
+
+.toggle-btn:hover {
+  color: #f54900;
+}
+
+/* Preview container styling */
+.preview-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.preview-box {
+  flex: 1;
+  min-width: 300px;
+}
+
+/* Diff container: ensures pre-formatted text and wrapping */
+.diff-container {
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: 0.5rem;
+  border-radius: 4px;
+  white-space: pre-wrap;
+  font-family: monospace;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+/* Responsive Typography and Layout */
 @media (max-width: 767px) {
-    h1 {
-        font-size: 1.6rem;
-    }
+  h1 {
+    font-size: 1rem;
+  }
 }
-
 @media (min-width: 768px) {
-    .container {
-        max-width: 720px;
-		margin-top: 2px;
-    }
+  .container {
+    max-width: 720px;
+    margin-top: 2px;
+  }
 }

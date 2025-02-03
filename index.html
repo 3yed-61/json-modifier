@@ -1,217 +1,346 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JSON Modifier</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JSON Modifier - Parameter Targeting with Preview</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+  <!-- SweetAlert2 CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" />
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="styles.css" />
+  <!-- jsdiff Library for computing differences -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jsdiff/7.0.0/diff.min.js"></script>
 </head>
 <body>
-    <nav class="navbar navbar-expand navbar-dark bg-primary">
-        <div class="container">
-            <a class="navbar-brand me-0" href="https://github.com/3yed-61" target="_blank">3λΞĐ</a>
-            <ul class="navbar-nav px-0">
-                <li class="nav-item">
-                    <a class="nav-link pe-0" href="https://3yed-61.github.io/json-modifier/">
-                        <i class="fab fa-github" style="font-size:1.4rem"></i>
-                    </a>
-                </li>
-            </ul>
-        </div>
-    </nav>
-
-    <div class="container mt-1">
-        <div class="row">
-            <h1 class="text-center">JSON Modifier</h1>
-
-            <div id="inputSection">
-                <div class="col-12">
-                    <label for="fileInput" class="form-label">
-                        <i class="fa-solid fa-file-arrow-up"></i> Upload JSON File
-                    </label>
-                    <input class="form-control" type="file" id="fileInput" accept=".json">
-                </div>
-
-                <div class="col-12 mt-1">
-                    <label for="jsonTextInput" class="form-label">
-                        <i class="fa-solid fa-clipboard"></i> Or Paste JSON Directly Here
-                    </label>
-                    <textarea id="jsonTextInput" class="form-control" rows="8" placeholder="Paste JSON here..."></textarea>
-                </div>
-
-                <div class="col-12 mt-1">
-                    <label for="serverName" class="form-label">
-                        <i class="fa-solid fa-server"></i> Server Name
-                    </label>
-                    <input type="text" id="serverName" class="form-control" placeholder="Enter new server name">
-                </div>
-
-                <div class="col-12 mt-1">
-                    <label for="host" class="form-label">
-                        <i class="fa-solid fa-cloud"></i> Host
-                    </label>
-                    <input type="text" id="host" class="form-control" placeholder="Enter new host">
-                </div>
-
-                <div class="col-12 mt-1">
-                    <label for="ipList" class="form-label">
-                        <i class="fa-solid fa-network-wired"></i> Addresses List (one address per line)
-                    </label>
-                    <textarea id="ipList" class="form-control" rows="3" placeholder="Enter addresses, IP or domain"></textarea>
-                </div>
-
-                <button class="btn btn-primary w-100 mt-2 mb-2" onclick="processJson()">
-                    <i class="fa-solid fa-cogs"></i> Process JSON
-                </button>
-            </div>
-
-            <div id="outputSection" class="hidden">
-                <div class="col-12 mt-2">
-                    <label for="output" class="form-label">
-                        <i class="fa-solid fa-code"></i> Modified JSON
-                    </label>
-                    <textarea id="output" class="form-control" rows="8" placeholder="Modified JSON will appear here..." readonly></textarea>
-                </div>
-
-                <button id="copyButton" class="btn btn-secondary w-100 mt-2" onclick="copyToClipboard()">
-                    <i class="fa-solid fa-copy"></i> Copy to Clipboard
-                </button>
-                <button id="saveButton" class="btn btn-primary w-100 mt-2" onclick="saveFile()">
-                    <i class="fa-solid fa-download"></i> Save as JSON
-                </button>
-            </div>
-        </div>
+  <nav class="navbar navbar-expand navbar-dark bg-primary">
+    <div class="container">
+      <a class="navbar-brand me-0" href="https://github.com/3yed-61">3λΞĐ</a>
     </div>
-</body>
+  </nav>
+
+  <div class="container mt-3">
+    <div class="row">
+      <h1 class="text-center mt-3">JSON Modifier</h1>
+
+      <!-- Input Section -->
+      <div id="inputSection">
+        <!-- File Upload -->
+        <div class="col-12 mt-3">
+          <label for="fileInput" class="form-label">
+            <i class="fa-solid fa-file-arrow-up"></i> Upload JSON File
+          </label>
+          <input class="form-control" type="file" id="fileInput" accept=".json" />
+        </div>
+
+        <!-- JSON Text Input -->
+        <div class="col-12 mt-3">
+          <label for="jsonTextInput" class="form-label">
+            <i class="fa-solid fa-clipboard"></i> Or Paste JSON Directly Here
+          </label>
+          <textarea id="jsonTextInput" class="form-control" rows="8" placeholder="Paste JSON here..."></textarea>
+        </div>
+
+		<!-- Parameter Key & New Value Inputs -->
+		<div class="col-12 mt-3">
+		  <label class="form-label">
+			<i class="fa-solid fa-key"></i> Parameter Key & New Value
+			<i class="fa-solid fa-eye toggle-btn" onclick="toggleVisibility('paramContainer')"></i>
+		  </label>
+		  <div id="paramContainer" class="hidden">
+			<input
+			  type="text"
+			  id="paramKey"
+			  class="form-control mt-2"
+			  placeholder="e.g., id, name (keys separated by comma and space)"
+			/>
+			<input
+			  type="text"
+			  id="paramValue"
+			  class="form-control mt-2"
+			  placeholder="e.g., 123, John Doe (values separated by comma and space)"
+			/>
+		  </div>
+		</div>
+
+        <!-- Server Name Input -->
+		<div class="col-12 mt-3">
+		  <label for="serverName" class="form-label">
+			<i class="fa-solid fa-server"></i> Server Name
+			<i class="fa-solid fa-eye toggle-btn" onclick="toggleVisibility('serverNameContainer')"></i>
+		  </label>
+		  <div id="serverNameContainer" class="hidden">
+			<input type="text" id="serverName" class="form-control" placeholder="Enter new server name" />
+		  </div>
+		</div>
+
+		<!-- Host Input -->
+		<div class="col-12 mt-3">
+		  <label for="host" class="form-label">
+			<i class="fa-solid fa-cloud"></i> Host
+			<i class="fa-solid fa-eye toggle-btn" onclick="toggleVisibility('hostContainer')"></i>
+		  </label>
+		  <div id="hostContainer" class="hidden">
+			<input type="text" id="host" class="form-control" placeholder="Enter new host" />
+		  </div>
+		</div>
+
+		<!-- IP List Input -->
+		<div class="col-12 mt-3">
+		  <label for="ipList" class="form-label">
+			<i class="fa-solid fa-network-wired"></i> IP Addresses List
+			<i class="fa-solid fa-eye toggle-btn" onclick="toggleVisibility('ipListContainer')"></i>
+		  </label>
+		  <div id="ipListContainer" class="hidden">
+			<textarea id="ipList" class="form-control" rows="5" placeholder="Enter IP addresses, one per line"></textarea>
+		  </div>
+		</div>
+
+        <!-- Preview Button -->
+        <button class="btn btn-primary w-100 mt-3" onclick="previewChanges()">
+          <i class="fa-solid fa-eye"></i> Preview Changes
+        </button>
+      </div>
+
+      <!-- Preview Section -->
+		<div id="previewSection" class="hidden">
+		  <h2 class="text-center mt-4">Preview Changes</h2>
+		  <div class="preview-container mt-3">
+			<!-- Modified JSON Preview Only -->
+			<div class="preview-box">
+			  <h5>Modified JSON (Changes Highlighted)</h5>
+			  <pre id="diffPreview" class="diff-container"></pre>
+			</div>
+		  </div>
+		  <div class="mt-3 d-flex gap-3">
+			<button class="btn btn-success flex-fill" onclick="confirmChanges()">
+			  <i class="fa-solid fa-check"></i> Confirm Changes
+			</button>
+			<button class="btn btn-secondary flex-fill" onclick="cancelPreview()">
+			  <i class="fa-solid fa-times"></i> Cancel
+			</button>
+		  </div>
+		</div>
 
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
+      <!-- Output Section -->
+      <div id="outputSection" class="hidden">
+        <div class="col-12 mt-3">
+          <label for="output" class="form-label">
+            <i class="fa-solid fa-code"></i> Final Modified JSON
+          </label>
+          <textarea id="output" class="form-control" rows="15" readonly></textarea>
+        </div>
+        <button class="btn btn-secondary w-100 mt-3" onclick="copyToClipboard()">
+          <i class="fa-solid fa-copy"></i> Copy to Clipboard
+        </button>
+        <button class="btn btn-primary w-100 mt-2" onclick="saveFile()">
+          <i class="fa-solid fa-download"></i> Save as JSON
+        </button>
+        <button class="btn btn-warning w-100 mt-2" onclick="resetModifier()">
+          <i class="fa-solid fa-rotate-left"></i> Reset
+        </button>
+      </div>
+    </div>
+  </div>
 
-<script>
-let jsonData = null;
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- SweetAlert2 JS -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
 
-document.getElementById('fileInput').addEventListener('change', function(event) {
-    const file = event.target.files[0];
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        try {
-            const jsonString = e.target.result;
-            jsonData = JSON.parse(jsonString);
-            document.getElementById('jsonTextInput').value = JSON.stringify(jsonData, null, 4);
-            Swal.fire({
-                showConfirmButton: false,
-                timer: 2000,
-                icon: 'success',
-                title: 'File loaded successfully!'
-		        });
-            console.log("Loaded JSON:", jsonData);
-        } catch (error) {
-            Swal.fire('Error', 'Invalid JSON file: ' + error.message, 'error');
-        }
-    };
-    reader.readAsText(file);
-});
+  <script>
+    let originalJson = null;   // The unmodified JSON object
+    let modifiedJson = null;   // The modified version (clone with changes)
 
-function processJson() {
-    const jsonTextInput = document.getElementById('jsonTextInput').value.trim();
-
-    if (!jsonData && jsonTextInput) {
-        try {
-            jsonData = JSON.parse(jsonTextInput);
-            console.log("Parsed JSON from text input:", jsonData);
-        } catch (error) {
-            Swal.fire('Error', 'Invalid JSON input: ' + error.message, 'error');
-            return;
-        }
+    // Helper: Deep clone using JSON serialization
+    function deepClone(obj) {
+      return JSON.parse(JSON.stringify(obj));
     }
 
-    if (!jsonData) {
-        Swal.fire('Error', 'Please load a JSON file or enter JSON input.', 'warning');
-        return;
+    // Helper: Recursively update all occurrences of a key in an object
+	function updateKeyInObject(obj, targetKey, newValue) {
+	  for (let key in obj) {
+		if (obj.hasOwnProperty(key)) {
+		  if (key === targetKey) {
+			obj[key] = newValue;
+		  } else if (typeof obj[key] === "object" && obj[key] !== null) {
+			updateKeyInObject(obj[key], targetKey, newValue);
+		  }
+		}
+	  }
+	}
+
+    // Handle file upload and load JSON
+    document.getElementById('fileInput').addEventListener('change', function(event) {
+      const file = event.target.files[0];
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          originalJson = JSON.parse(e.target.result);
+          document.getElementById('jsonTextInput').value = JSON.stringify(originalJson, null, 4);
+          Swal.fire('Success', 'File loaded successfully!', 'success');
+        } catch (error) {
+          Swal.fire('Error', 'Invalid JSON file: ' + error.message, 'error');
+          originalJson = null;
+        }
+      };
+      reader.readAsText(file);
+    });
+
+    // Generate diff HTML using jsdiff (using JsDiff instead of Diff)
+    function generateDiffHtml(originalStr, modifiedStr) {
+      const diff = Diff.diffLines(originalStr, modifiedStr);
+      let html = "";
+      diff.forEach(part => {
+        // Use green for additions, red for deletions, and transparent for unchanged text
+        const color = part.added ? "var(--diff-add)" : part.removed ? "var(--diff-remove)" : "transparent";
+        html += `<span style="background-color: ${color}; white-space: pre-wrap;">${part.value}</span>`;
+      });
+      return html;
     }
 
-    const serverName = document.getElementById('serverName').value.trim();
-    const ipList = document.getElementById('ipList').value.split('\n').map(ip => ip.trim()).filter(Boolean);
-    const host = document.getElementById('host').value.trim();
-
+// Preview changes: apply modifications and show diff preview
+function previewChanges() {
+  // Load JSON from textarea if no file was loaded
+  if (!originalJson) {
     try {
-        let changesMade = false;
-        let ipIndex = 0;
-
-        jsonData.outbounds.forEach(outbound => {
-            if (serverName && outbound?.xray_outbound_raw?.streamSettings?.tlsSettings) {
-                console.log(`Updating serverName for outbound: ${outbound.tag}`);
-                outbound.xray_outbound_raw.streamSettings.tlsSettings.serverName = serverName;
-                changesMade = true;
-            }
-
-            if (ipList.length > 0 && outbound?.xray_outbound_raw?.settings?.vnext?.[0]) {
-                const ipToUse = ipList[ipIndex % ipList.length];
-                console.log(`Updating address to ${ipToUse} for outbound: ${outbound.tag}`);
-                outbound.xray_outbound_raw.settings.vnext[0].address = ipToUse;
-                ipIndex++;
-                changesMade = true;
-            }
-
-            if (host && outbound?.xray_outbound_raw?.streamSettings?.wsSettings?.host) {
-                console.log(`Updating host for outbound: ${outbound.tag}`);
-                outbound.xray_outbound_raw.streamSettings.wsSettings.host = host;
-                changesMade = true;
-            }
-        });
-
-        if (changesMade) {
-            document.getElementById('inputSection').classList.add('hidden');
-
-            document.getElementById('outputSection').classList.remove('hidden');
-            document.getElementById('output').value = JSON.stringify(jsonData, null, 4);
-
-            console.log("Modified JSON:", jsonData);
-        } else {
-            Swal.fire('Info', 'No fields were modified.', 'info');
-        }
+      originalJson = JSON.parse(document.getElementById('jsonTextInput').value);
     } catch (error) {
-        console.error("Error processing JSON:", error);
-        Swal.fire('Error', 'Error processing JSON. Check the structure.', 'error');
+      Swal.fire('Error', 'Invalid JSON input: ' + error.message, 'error');
+      return;
     }
+  }
+  // Create a deep clone to modify so the original remains intact
+  modifiedJson = deepClone(originalJson);
+
+// Get modification values from form
+const serverName = document.getElementById('serverName').value.trim();
+const host = document.getElementById('host').value.trim();
+const ipList = document.getElementById('ipList').value.split('\n').map(ip => ip.trim()).filter(Boolean);
+const paramKey = document.getElementById('paramKey').value.trim();
+const paramValue = document.getElementById('paramValue').value.trim();
+
+// If the JSON has an "outbounds" array, update its entries; otherwise, skip these modifications.
+if (modifiedJson.outbounds && Array.isArray(modifiedJson.outbounds)) {
+  modifiedJson.outbounds.forEach((outbound, index) => {
+    if (serverName && outbound.xray_outbound_raw?.streamSettings?.tlsSettings) {
+      outbound.xray_outbound_raw.streamSettings.tlsSettings.serverName = serverName;
+    }
+    if (host && outbound.xray_outbound_raw?.streamSettings?.wsSettings) {
+      outbound.xray_outbound_raw.streamSettings.wsSettings.host = host;
+    }
+    if (ipList.length > 0 && outbound.xray_outbound_raw?.settings?.vnext?.[0]) {
+      outbound.xray_outbound_raw.settings.vnext[0].address = ipList[index % ipList.length];
+    }
+  });
 }
 
-function copyToClipboard() {
-    const output = document.getElementById('output');
-    output.select();
-    document.execCommand('copy');
-    Swal.fire({
-        toast: true,
-        position: 'top-end',
-        showConfirmButton: false,
-        timer: 1500,
-        icon: 'success',
-        title: 'Copied!'
-		});
+// Apply the key-based parameter update across the entire modified JSON
+if (paramKey && paramValue) {
+  // Validate comma-space separation if multiple parameters are provided.
+  if (paramKey.includes(',') && !paramKey.includes(', ')) {
+    Swal.fire('Error', 'Please separate multiple keys using a comma and a space.', 'error');
+    return;
+  }
+  if (paramValue.includes(',') && !paramValue.includes(', ')) {
+    Swal.fire('Error', 'Please separate multiple values using a comma and a space.', 'error');
+    return;
+  }
+
+  // Split keys and values by ", " to get arrays.
+  const keys = paramKey.split(', ').map(k => k.trim()).filter(k => k);
+  const values = paramValue.split(', ').map(v => v.trim()).filter(v => v);
+
+  // Check if the numbers of keys and values match or if a single value is provided.
+  if (values.length === 1 || keys.length === values.length) {
+    // If only one value is provided, apply it to all keys.
+    if (values.length === 1 && keys.length > 1) {
+      keys.forEach(key => {
+        updateKeyInObject(modifiedJson, key, values[0]);
+      });
+    } else {
+      // Otherwise, update each key with its corresponding value.
+      keys.forEach((key, i) => {
+        updateKeyInObject(modifiedJson, key, values[i]);
+      });
+    }
+  } else {
+    Swal.fire('Error', 'The number of Parameter Keys and New Values must match, or provide only one new value to apply to all keys.', 'error');
+    return;
+  }
 }
 
-function saveFile() {
-    const modifiedJson = document.getElementById('output').value;
-    const blob = new Blob([modifiedJson], { type: "application/json" });
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = "modified.json";
-    link.click();
-    Swal.fire({
-        toast: true,
-        position: 'top-end',
-        showConfirmButton: false,
-        timer: 1500,
-        icon: 'success',
-        title: 'saved as modified.json!'
-		});
+  // Prepare strings for diffing
+  const originalStr = JSON.stringify(originalJson, null, 4);
+  const modifiedStr = JSON.stringify(modifiedJson, null, 4);
+
+  // Set diff HTML only
+  document.getElementById('diffPreview').innerHTML = generateDiffHtml(originalStr, modifiedStr);
+
+  // Toggle preview section visibility
+  document.getElementById('inputSection').classList.add('hidden');
+  document.getElementById('previewSection').classList.remove('hidden');
 }
 
-</script>
+    // Cancel preview: return to input form (discard preview)
+    function cancelPreview() {
+      document.getElementById('previewSection').classList.add('hidden');
+      document.getElementById('inputSection').classList.remove('hidden');
+    }
 
+    // Confirm preview: move modified JSON to final output section
+    function confirmChanges() {
+      document.getElementById('previewSection').classList.add('hidden');
+      document.getElementById('outputSection').classList.remove('hidden');
+      document.getElementById('output').value = JSON.stringify(modifiedJson, null, 4);
+      Swal.fire('Success', 'Changes confirmed!', 'success');
+    }
+
+    // Copy final JSON to clipboard using modern API
+    function copyToClipboard() {
+      const outputText = document.getElementById('output').value;
+      navigator.clipboard.writeText(outputText)
+        .then(() => Swal.fire('Copied!', 'JSON copied to clipboard.', 'success'))
+        .catch(err => Swal.fire('Error', 'Failed to copy: ' + err, 'error'));
+    }
+
+    // Save final JSON to a file
+    function saveFile() {
+      const blob = new Blob([document.getElementById('output').value], { type: "application/json" });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = "modified.json";
+      link.click();
+      Swal.fire('Saved!', 'File saved as modified.json.', 'success');
+    }
+
+    // Reset all fields and return to input screen
+    function resetModifier() {
+      originalJson = null;
+      modifiedJson = null;
+      document.getElementById('fileInput').value = "";
+      document.getElementById('jsonTextInput').value = "";
+      document.getElementById('serverName').value = "";
+      document.getElementById('host').value = "";
+      document.getElementById('ipList').value = "";
+      document.getElementById('paramKey').value = "";
+      document.getElementById('paramValue').value = "";
+      document.getElementById('output').value = "";
+      document.getElementById('inputSection').classList.remove('hidden');
+      document.getElementById('previewSection').classList.add('hidden');
+      document.getElementById('outputSection').classList.add('hidden');
+    }
+	
+	// Function to toggle visibility of input fields
+function toggleVisibility(containerId) {
+  const container = document.getElementById(containerId);
+  container.classList.toggle("hidden");
+}
+
+  </script>
 </body>
 </html>
